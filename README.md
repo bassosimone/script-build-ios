@@ -1,14 +1,7 @@
-# Package MK and deps for Unix and Mingw-w64
+# Package MK for iOS
 
 This repository contains the scripts to compile and package MK and its
-dependencies on Unix systems (especially iOS, but notably not Android, for
-which [there is a separate repository](
-https://github.com/measurement-kit/script-build-android)) as well as with
-Mingw-w64 (i.e. Windows using a Unix cross toolchain).
-
-Note: if you want to build for Windows using Microsoft tooling, use
-[measurement-kit/script-build-windows](
-https://github.com/measurement-kit/script-build-windows) instead.
+dependencies on iOS systems.
 
 ## Build and package
 
@@ -22,10 +15,6 @@ In addition to Unix essential commands, you'll need:
 - make
 - patch
 
-Each specific build has additional requirements.
-
-### iOS
-
 From a macOS system with Xcode and command line developer tools installed:
 
 ```
@@ -38,30 +27,16 @@ has been reported to work. See [measurement-kit/measurement-kit#658](
 https://github.com/measurement-kit/measurement-kit/issues/658)
 for hints on the process.
 
-### Mingw-w64
-
-We assume that you have installed a mingw-w64 distribution compiled with
-support for POSIX threads and C++11 threads. The one provided by by
-[Homebrew](brew.sh) is the one we generally use.
-
-With mingw-w64 installed, just run:
-
-```
-./build-mingw `./all-deps.sh`
-./build-mingw measurement-kit
-./package
-```
-
 ## Publishing packages
 
-Packages are publishes as part of [script-build-unix releases](
-https://github.com/measurement-kit/script-build-unix/releases).
+Packages are publishes as part of [script-build-ios releases](
+https://github.com/measurement-kit/script-build-ios/releases).
 
 ## Downloading packages
 
 For the download to succeed, you must have committed and pushed the
 changes to `SHA256SUM` created by the build step and published the
-related tarballs in the current release of script-build-unix.
+related tarballs in the current release of script-build-ios.
 
 Then run:
 
