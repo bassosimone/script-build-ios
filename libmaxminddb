@@ -1,0 +1,31 @@
+#!/bin/sh
+set -ex
+PKG_TOPDIR=$(cd $(dirname $0) && pwd -P)
+PKG_NAME=libmaxminddb
+PKG_VERSION=1.3.2
+PKG_CHECKSUM=c0785521c7e5515f1169db90ed6e51bc2a5a000377d0fbad87e4d5a791a6e364
+PKG_URL=https://github.com/maxmind/libmaxminddb/archive/1.3.2.tar.gz
+PKG_BUILD=+4
+[ "$PKG_OS" != "" -a "$PKG_ARCH" != "" ]
+PKG_FULLNAME=$PKG_NAME/$PKG_VERSION$PKG_BUILD
+PKG_BUILDDIR=$PKG_TOPDIR/MK_BUILD/$PKG_OS/$PKG_FULLNAME/$PKG_ARCH
+PKG_INSTALLDIR=$PKG_TOPDIR/MK_DIST/$PKG_OS/$PKG_FULLNAME/$PKG_ARCH
+rm -rf $PKG_BUILDDIR $PKG_INSTALLDIR
+install -d $PKG_BUILDDIR $PKG_INSTALLDIR
+(
+  set -ex
+  cd $PKG_BUILDDIR
+  curl -fsSLO $PKG_URL
+  REAL_CHECKSUM=$(shasum -a 256 $PKG_VERSION.tar.gz | awk '{print $1}')
+  [ $PKG_CHECKSUM = "$REAL_CHECKSUM" ]
+  tar -xzf $PKG_VERSION.tar.gz
+  cd $PKG_NAME-$PKG_VERSION
+  ./bootstrap
+  ./configure --prefix=/ --disable-shared --disable-tests $PKG_CONFIGUREFLAGS
+  make V=0
+  make install DESTDIR=$PKG_INSTALLDIR
+  rm -rf $PKG_INSTALLDIR/bin
+  rm -rf $PKG_INSTALLDIR/lib/pkgconfig
+  rm -rf $PKG_INSTALLDIR/lib/libmaxminddb.la
+  rm -rf $PKG_INSTALLDIR/share
+)

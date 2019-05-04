@@ -1,0 +1,36 @@
+#!/bin/sh
+set -ex
+PKG_TOPDIR=$(cd $(dirname $0) && pwd -P)
+cd $PKG_TOPDIR
+PKG_NAME=libressl
+PKG_VERSION=2.8.3
+PKG_CHECKSUM=9b640b13047182761a99ce3e4f000be9687566e0828b4a72709e9e6a3ef98477
+PKG_URL=https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/$PKG_NAME-$PKG_VERSION.tar.gz
+PKG_BUILD=+2
+[ "$PKG_OS" != "" -a "$PKG_ARCH" != "" ]
+PKG_FULLNAME=$PKG_NAME/$PKG_VERSION$PKG_BUILD
+PKG_BUILDDIR=$PKG_TOPDIR/MK_BUILD/$PKG_OS/$PKG_FULLNAME/$PKG_ARCH
+PKG_INSTALLDIR=$PKG_TOPDIR/MK_DIST/$PKG_OS/$PKG_FULLNAME/$PKG_ARCH
+rm -rf $PKG_BUILDDIR $PKG_INSTALLDIR
+install -d $PKG_BUILDDIR $PKG_INSTALLDIR
+(
+  set -ex
+  cd $PKG_BUILDDIR
+  curl -fsSLO $PKG_URL
+  REAL_CHECKSUM=$(shasum -a 256 $PKG_NAME-$PKG_VERSION.tar.gz | awk '{print $1}')
+  [ $PKG_CHECKSUM = "$REAL_CHECKSUM" ]
+  tar -xzf $PKG_NAME-$PKG_VERSION.tar.gz
+  cd $PKG_NAME-$PKG_VERSION
+  patch -Np1 -i $PKG_TOPDIR/libressl-000.patch
+  autoreconf -i
+  ./configure --prefix=/ --disable-shared $PKG_CONFIGUREFLAGS
+  make V=0
+  make install DESTDIR=$PKG_INSTALLDIR
+  rm -rf $PKG_INSTALLDIR/bin
+  rm -rf $PKG_INSTALLDIR/etc
+  rm -rf $PKG_INSTALLDIR/lib/pkgconfig
+  rm -rf $PKG_INSTALLDIR/lib/libcrypto.la
+  rm -rf $PKG_INSTALLDIR/lib/libssl.la
+  rm -rf $PKG_INSTALLDIR/lib/libtls.la
+  rm -rf $PKG_INSTALLDIR/share
+)
