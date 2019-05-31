@@ -3,6 +3,9 @@
 This repository contains the scripts to compile and package MK and its
 dependencies on iOS systems.
 
+⚠️⚠️⚠️⚠️⚠️⚠️⚠️: This repository is now unused. We build iOS depenedencies directly
+using https://github.com/measurement-kit/homebrew-measurement-kit now.
+
 ## Build and package
 
 By following this procedure, you will find tarball packages in the root
